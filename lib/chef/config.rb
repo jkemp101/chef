@@ -525,7 +525,9 @@ class Chef
     def self.find_embedded_dir_in(path)
       if File.basename(path) == "embedded"
         path
-      elsif File.basename(path) == path
+      elsif File.basename(path) == "/"
+        # This is safe on windows as well because
+        # File.basename("c:/") returns "/"
         nil
       else
         find_embedded_dir_in(File.dirname(path))
