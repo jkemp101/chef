@@ -82,6 +82,10 @@ class Chef::Application::Knife < Chef::Application
     :description => "API Client Key",
     :proc => lambda { |path| File.expand_path(path, Dir.pwd) }
 
+  option :client_key_password,
+    :long => "--key-pass KEY",
+    :description => "API Client Key Password"
+
   option :chef_server_url,
     :short => "-s URL",
     :long => "--server-url URL",

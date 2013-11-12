@@ -433,7 +433,11 @@ class Chef
       else
         return nil
       end
-      @key = OpenSSL::PKey::RSA.new(@raw_key)
+      if Chef::Config[:client_key_password] 
+        @key = OpenSSL::PKey::RSA.new(@raw_key, Chef::Config[:client_key_password] )
+      else
+        @key = OpenSSL::PKey::RSA.new(@raw_key)
+      end
     rescue SystemCallError, IOError => e
       Chef::Log.warn "Failed to read the private key #{key_file}: #{e.inspect}"
       raise Chef::Exceptions::PrivateKeyMissing, "I cannot read #{key_file}, which you told me to use to sign requests!"
