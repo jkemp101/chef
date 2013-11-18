@@ -32,7 +32,11 @@ class Chef
         content_file = nil
         
         timestamp = Time.now.utc.iso8601
-        secret_key = OpenSSL::PKey::RSA.new(File.read(secret_key_filename))
+        if Chef::Config[:client_key_password] 
+            secret_key = OpenSSL::PKey::RSA.new(File.read(secret_key_filename), Chef::Config[:client_key_password] )
+        else
+            secret_key = OpenSSL::PKey::RSA.new(File.read(secret_key_filename))
+        end 
 
         unless params.nil? || params.empty?
           params.each do |key, value|

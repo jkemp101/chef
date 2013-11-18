@@ -145,7 +145,12 @@ class Chef
                                                                            :user_id     => rest.client_name
                                                                            )
         headers = { 'content-type' => 'application/x-binary', 'content-md5' => checksum64, :accept => 'application/json' }
-        headers.merge!(sign_obj.sign(OpenSSL::PKey::RSA.new(rest.signing_key)))
+        if Chef::Config[:client_key_password] 
+            secret_key = OpenSSL::PKey::RSA.new(rest.signing_key, Chef::Config[:client_key_password] )
+        else
+            secret_key = OpenSSL::PKey::RSA.new(rest.signing_key)
+        end 
+        headers.merge!(sign_obj.sign(secret_key))
 
         begin
           RestClient::Resource.new(url, :headers=>headers, :timeout=>1800, :open_timeout=>1800).put(file_contents)

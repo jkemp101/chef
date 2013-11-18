@@ -191,7 +191,13 @@ class Chef
               raise Chef::Exceptions::ConfigurationError, "The configured ssl_client_key #{config[:ssl_client_key]} does not exist"
             end
             @http_client.cert = OpenSSL::X509::Certificate.new(::File.read(config[:ssl_client_cert]))
-            @http_client.key = OpenSSL::PKey::RSA.new(::File.read(config[:ssl_client_key]))
+            
+            if Chef::Config[:client_key_password] 
+                @http_client.key = OpenSSL::PKey::RSA.new(::File.read(config[:ssl_client_key]), Chef::Config[:client_key_password] )
+            else
+                @http_client.key = OpenSSL::PKey::RSA.new(::File.read(config[:ssl_client_key]))
+            end 
+
           end
         end
 
